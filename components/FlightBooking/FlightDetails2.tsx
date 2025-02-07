@@ -64,142 +64,123 @@ const FlightDetail2: React.FC<FlightDetailProps> = ({ SIdata }) => {
   };
 
   return (
-    <div className="mx-auto font-jost bg-white my-5">
-      <div className="space-y-6 md:py-2 md:px-6">
-        {SIdata.map((segment, index) => (
-          <div key={index}>
-            {/* Segment Flight Details */}
-            <div className="flex flex-col md:flex-row justify-center md:justify-between gap-3 md:gap-10 w-full ">
-              <div className="flex items-center gap-3">
-                {segment?.fD.aI.name === "Air India" && (
+    <div className="space-y-8">
+      {SIdata.map((segment, index) => (
+        <div key={index} className="relative">
+          <div className="bg-white rounded-lg p-4 md:p-6 hover:shadow-md transition-shadow duration-200">
+            {/* Airline Info */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+              <div className="flex items-center space-x-4 mb-4 md:mb-0">
+                <div className="relative w-16 h-16">
                   <Image
-                    width={48}
-                    height={48}
-                    src={"/assets/AI.png"}
-                    alt="img"
-                    className="w-12 h-12 bg-gray-200 rounded-full"
-                  ></Image>
-                )}
-                {segment?.fD.aI.name === "SpiceJet" && (
-                  <Image
-                    width={48}
-                    height={48}
-                    src={"/assets/SG.png"}
-                    alt="img"
-                    className="w-12 h-12 bg-gray-200 rounded-full"
-                  ></Image>
-                )}
-                {segment?.fD.aI.name === "Vistara" && (
-                  <Image
-                    width={48}
-                    height={48}
-                    src={"/assets/UK.png"}
-                    alt="img"
-                    className="w-12 h-12 bg-gray-200 rounded-full"
-                  ></Image>
-                )}
-                {segment?.fD.aI.name === "Hahn Air" && (
-                  <Image
-                    width={48}
-                    height={48}
-                    src={"/assets/H1.png"}
-                    alt="img"
-                    className="w-12 h-12 bg-gray-200 rounded-full"
-                  ></Image>
-                )}
-                <div className="space-y-0.5">
-                  <h3 className="font-bold text-[14px] md:text-[16px] font-poppins leading-[24px] whitespace-nowrap">
+                    width={64}
+                    height={64}
+                    src={`/assets/${segment.fD.aI.code}.png`}
+                    alt={segment.fD.aI.name}
+                    className="rounded-full bg-gray-50 p-2"
+                  />
+                </div>
+                <div>
+                  <h3 className="font-bold text-lg text-gray-900">
                     {segment.fD.aI.name}
                   </h3>
-                  <p className="font-semibold text-[10px] md:text-[12px] font-poppins leading-[14px]">
+                  <p className="text-gray-600">
                     {segment.fD.aI.code}-{segment.fD.fN}
                   </p>
                 </div>
               </div>
-              <div className="flex justify-between w-full items-center text-[12px] md:text-[14px]">
-                <div className="space-y-1 max-w-[250px]">
-                  <p className="font-poppins  md:whitespace-nowrap text-[#5A5E5F]">
-                    {new Date(segment.dt).toLocaleDateString("en-GB", {
-                      weekday: "long",
-                      day: "numeric",
-                      month: "short",
-                    })}
-                  </p>
-                  <h3 className="font-bold font-poppins text-[12px] md:text-[15px] md:whitespace-nowrap">
-                    {new Date(segment.dt).toLocaleTimeString("en-GB", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}{" "}
-                    ({segment.da.code})
-                  </h3>
-                  <p className="font-jost text-[#5A5E5F] leading-[120%]">
-                    {segment.da.city}, {segment.da.name}{" "}
-                    {segment.da.terminal &&
-                      `, Terminal: ${segment.da.terminal}`}
-                  </p>
-                </div>
-
-                <div className="flex flex-col items-center justify-center w-full px-1.5 md:px-3 relative">
-                  {/* Time display */}
-                  <p className="absolute left-1/2 -translate-x-1/2 top-1 md:top-4 font-poppins text-[9px] md:text-[15px] text-[#5A5E5F] leading-[14.5px] px-2 md:px-3 py-0.5 md:py-1.5 rounded-3xl bg-[#FFEFB0] whitespace-nowrap">
-                    {formatDuration(segment.duration)}
-                  </p>
-
-                  <div className="flex items-center w-full mt-6">
-                    <div className="w-1.5 md:w-2.5 h-1.5 md:h-2.5 rounded-full bg-[#FFCD09]" />
-
-                    <div className="flex-1 h-0.5 mx-1 border-0 border-t-2 md:border-t-4 border-dotted border-[#FFCD09]" />
-
-                    <div className="w-1.5 md:w-2.5 h-1.5 md:h-2.5 rounded-full bg-[#FFCD09]" />
-
-                    <div className="w-2 md:w-4 h-2 md:h-4 text-[#5A5E5F] ml-1 md:ml-2">
-                      <Image
-                        src={"/assets/flight.png"}
-                        alt="flight"
-                        width={100}
-                        height={100}
-                        className=""
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-1 max-w-[250px]">
-                  <p className="font-poppins  md:whitespace-nowrap text-[#5A5E5F]">
-                    {new Date(segment.at).toLocaleDateString("en-GB", {
-                      weekday: "long",
-                      day: "numeric",
-                      month: "short",
-                    })}
-                  </p>
-                  <h3 className="font-bold font-poppins text-[12px] md:text-[15px] md:whitespace-nowrap">
-                    {new Date(segment.at).toLocaleTimeString("en-GB", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}{" "}
-                    {", "}({segment.aa.code})
-                  </h3>
-                  <p className="font-jost text-[#5A5E5F] leading-[120%]">
-                    {segment.aa.city}, {segment.aa.name}{" "}
-                    {segment.aa.terminal &&
-                      `, Terminal: ${segment.aa.terminal}`}
-                  </p>
-                </div>
+              
+              <div className="bg-[#FFEFB0] px-4 py-2 rounded-full">
+                <p className="text-sm font-medium text-gray-700">
+                  {formatDuration(segment.duration)}
+                </p>
               </div>
             </div>
 
-            {/* Layover Time if applicable */}
-            {index < SIdata.length - 1 && (
-              <div className="flex justify-center items-center pt-6 ">
-                <div className="bg-gray-100 text-gray-600 font-poppins text-[10px] md:text-sm py-1 px-4 rounded-lg shadow">
-                  Layover:{" "}
-                  {calculateLayoverTime(SIdata[index].at, SIdata[index + 1].dt)}
+            {/* Flight Route Details */}
+            <div className="flex justify-between items-center relative">
+              <div className="space-y-1 max-w-[250px]">
+                <p className="font-poppins  md:whitespace-nowrap text-[#5A5E5F]">
+                  {new Date(segment.dt).toLocaleDateString("en-GB", {
+                    weekday: "long",
+                    day: "numeric",
+                    month: "short",
+                  })}
+                </p>
+                <h3 className="font-bold font-poppins text-[12px] md:text-[15px] md:whitespace-nowrap">
+                  {new Date(segment.dt).toLocaleTimeString("en-GB", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}{" "}
+                  ({segment.da.code})
+                </h3>
+                <p className="font-jost text-[#5A5E5F] leading-[120%]">
+                  {segment.da.city}, {segment.da.name}{" "}
+                  {segment.da.terminal &&
+                    `, Terminal: ${segment.da.terminal}`}
+                </p>
+              </div>
+
+              <div className="flex flex-col items-center justify-center w-full px-1.5 md:px-3 relative">
+                {/* Time display */}
+                <p className="absolute left-1/2 -translate-x-1/2 top-1 md:top-4 font-poppins text-[9px] md:text-[15px] text-[#5A5E5F] leading-[14.5px] px-2 md:px-3 py-0.5 md:py-1.5 rounded-3xl bg-[#FFEFB0] whitespace-nowrap">
+                  {formatDuration(segment.duration)}
+                </p>
+
+                <div className="flex items-center w-full mt-6">
+                  <div className="w-1.5 md:w-2.5 h-1.5 md:h-2.5 rounded-full bg-[#FFCD09]" />
+
+                  <div className="flex-1 h-0.5 mx-1 border-0 border-t-2 md:border-t-4 border-dotted border-[#FFCD09]" />
+
+                  <div className="w-1.5 md:w-2.5 h-1.5 md:h-2.5 rounded-full bg-[#FFCD09]" />
+
+                  <div className="w-2 md:w-4 h-2 md:h-4 text-[#5A5E5F] ml-1 md:ml-2">
+                    <Image
+                      src={"/assets/flight.png"}
+                      alt="flight"
+                      width={100}
+                      height={100}
+                      className=""
+                    />
+                  </div>
                 </div>
               </div>
-            )}
+
+              <div className="space-y-1 max-w-[250px]">
+                <p className="font-poppins  md:whitespace-nowrap text-[#5A5E5F]">
+                  {new Date(segment.at).toLocaleDateString("en-GB", {
+                    weekday: "long",
+                    day: "numeric",
+                    month: "short",
+                  })}
+                </p>
+                <h3 className="font-bold font-poppins text-[12px] md:text-[15px] md:whitespace-nowrap">
+                  {new Date(segment.at).toLocaleTimeString("en-GB", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}{" "}
+                  {", "}({segment.aa.code})
+                </h3>
+                <p className="font-jost text-[#5A5E5F] leading-[120%]">
+                  {segment.aa.city}, {segment.aa.name}{" "}
+                  {segment.aa.terminal &&
+                    `, Terminal: ${segment.aa.terminal}`}
+                </p>
+              </div>
+            </div>
           </div>
-        ))}
-      </div>
+
+          {/* Layover indicator */}
+          {index < SIdata.length - 1 && (
+            <div className="flex justify-center my-4">
+              <div className="bg-gray-50 text-gray-600 px-6 py-3 rounded-full shadow-sm">
+                <span className="font-medium">Layover: </span>
+                {calculateLayoverTime(SIdata[index].at, SIdata[index + 1].dt)}
+              </div>
+            </div>
+          )}
+        </div>
+      ))}
     </div>
   );
 };

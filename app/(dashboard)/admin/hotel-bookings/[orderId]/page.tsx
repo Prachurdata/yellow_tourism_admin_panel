@@ -1,9 +1,10 @@
 import { prisma } from "@/lib/db";
 import Link from "next/link";
-import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { CalendarDays, CreditCard, Phone, User, Mail, Clock } from "lucide-react";
 
 const Page = async ({ params }: { params: { orderId: string } }) => {
-
     const bookingData = await prisma.hotelBooking.findMany({
         where: {
             orderId: params.orderId,
@@ -16,93 +17,141 @@ const Page = async ({ params }: { params: { orderId: string } }) => {
     console.log("the booking data of hotel  is ", bookingData);
     const booking = bookingData[0];
 
-    if(booking.paymentStatus === "UNPAID"){
+    if (!booking) {
         return (
-            <main>
-            <section className='flex justify-center items-center min-h-screen flex-col gap-4 w-10/12 mx-auto text-center'>
-                {/* <h1 className='text-3xl font-Poppins font-semibold'>Oops! Payment Failed.</h1> */}
-                <p className='text-3xl font-Poppins text-red-400'> Payment status:  UNPAID</p>
-
-                <div className="text-left space-y-4">
-                    <h2 className="text-lg md:text-3xl font-semibold text-gray-800">Booking Information</h2>
-                    <p><span className="font-medium">Booking ID:</span> {booking.bookingId}</p>
-                    <p><span className="font-medium">Amount:</span> ₹{parseFloat(booking.amount).toFixed(2)}</p>
-                    <p><span className="font-medium">Bookings Status:</span> {booking.status}</p>
-                    <p><span className="font-medium">Payment ID:</span> {booking.paymentId ? booking.paymentId : "N/A"}</p>
-                    <p><span className="font-medium">Created At:</span> {new Date(booking.createdAt).toLocaleString()}</p>
+            <main className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+                <div className="max-w-2xl mx-auto text-center">
+                    <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+                        No booking found for Order ID {params.orderId}
+                    </h1>
+                    <Link
+                        href={'/'}
+                        className="mt-6 inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500"
+                    >
+                        Return to Homepage
+                    </Link>
                 </div>
-                <Link href={'/'}
-                    className="mt-4 py-2 px-7 bg-[#FFCD09] text-white rounded-lg hover:bg-[#5A5E5F] transition-all duration-300 ease-in-out"
-                
-                >
-                    Go to Homepage
-                </Link>
-            </section>
-        </main>
-        )
-    }
-
-    if (bookingData.length === 0) {
-        return (
-            <main className="flex justify-center items-center min-h-screen flex-col gap-4 w-10/12 mx-auto text-center">
-                <h1 className="text-3xl font-Poppins font-semibold">No booking found for Order ID {params.orderId}</h1>
-                <Link href={'/'}
-                    className="mt-4 py-2 px-7 bg-[#FFCD09] text-white rounded-lg hover:bg-[#5A5E5F] transition-all duration-300 ease-in-out"
-                    
-                >
-                    Go to Homepage
-                </Link>
             </main>
         );
     }
 
-     // Assuming a single booking for the given orderId
+    if (booking.paymentStatus === "UNPAID") {
+        return (
+            <main className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+                <div className="max-w-3xl mx-auto">
+                    <Card className="border-red-200 dark:border-red-800">
+                        <CardHeader>
+                            <CardTitle className="flex items-center justify-between">
+                                <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                                    Booking Details
+                                </span>
+                                <Badge variant="destructive">Payment Status: UNPAID</Badge>
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-6">
+                            <BookingDetails booking={booking} />
+                            <div className="flex justify-center">
+                                <Link
+                                    href={'/'}
+                                    className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500"
+                                >
+                                    Return to Homepage
+                                </Link>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+            </main>
+        );
+    }
 
     return (
-        <main className="flex justify-center items-center min-h-screen flex-col gap-4 w-11/12 max-w-lg mx-auto text-center">
-            <section className="bg-white shadow-md rounded-lg p-6 md:p-8 w-full">
-                {/* <h1 className="text-2xl md:text-3xl font-Poppins font-semibold text-[#5A5E5F] mb-6">
-                    Booking Details for Order ID: {booking.orderId}
-                </h1> */}
+        <main className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-3xl mx-auto">
+                <Card className="border-green-200 dark:border-green-800">
+                    <CardHeader>
+                        <CardTitle className="flex items-center justify-between">
+                            <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                                Booking Details
+                            </span>
+                            <Badge variant="success" className="bg-green-500">
+                                Payment Status: PAID
+                            </Badge>
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {/* Booking Information */}
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                                        <CalendarDays className="h-5 w-5 text-cyan-500" />
+                                        Booking Information
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent className="space-y-4">
+                                    <BookingDetails booking={booking} />
+                                </CardContent>
+                            </Card>
 
-                {/* Booking Details */}
-                <div className="text-left space-y-4">
-                    <h2 className="text-lg md:text-3xl font-semibold text-gray-800">Booking Information</h2>
-                    <p><span className="font-medium">Booking ID:</span> {booking.bookingId}</p>
-                    <p><span className="font-medium">Amount:</span> ₹{parseFloat(booking.amount).toFixed(2)}</p>
-                    <p><span className="font-medium">Payment Status:</span> {booking.paymentStatus}</p>
-                    <p><span className="font-medium">Payment ID:</span> {booking.paymentId}</p>
-                    <p><span className="font-medium">Created At:</span> {new Date(booking.createdAt).toLocaleString()}</p>
-                </div>
+                            {/* User Information */}
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                                        <User className="h-5 w-5 text-cyan-500" />
+                                        User Information
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent className="space-y-4">
+                                    <UserDetails user={booking.user} />
+                                </CardContent>
+                            </Card>
+                        </div>
 
-                {/* User Information */}
-                <div className="text-left space-y-4 mt-6">
-                    <h2 className="text-lg md:text-xl font-semibold text-gray-800">User Information</h2>
-                    <p><span className="font-medium">Name:</span> {booking.user.name}</p>
-                    <p><span className="font-medium">Email:</span> {booking.user.email || "Not provided"}</p>
-                    <p><span className="font-medium">Phone:</span> {booking.user.phone}</p>
-                </div>
-
-                <div className="flex justify-center mt-8">
-                    <Link href={`/flight_bookings/bookings/${booking.bookingId}`}
-                        className="py-2 px-7 bg-[#FFCD09] text-white rounded-lg hover:bg-[#5A5E5F] transition-all duration-300 ease-in-out"
-                    >
-                        View Details
-                    </Link>
-                </div>
-
-                {/* Redirect Button */}
-
-                <div className="flex justify-center mt-8">
-                    <Link href={'/'}
-                        className="py-2 px-7 bg-[#FFCD09] text-white rounded-lg hover:bg-[#5A5E5F] transition-all duration-300 ease-in-out"
-                    >
-                        Go to Homepage
-                    </Link>
-                </div>
-            </section>
+                        <div className="flex justify-center space-x-4">
+                            <Link
+                                href={`/flight_bookings/bookings/${booking.bookingId}`}
+                                className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500"
+                            >
+                                View Full Details
+                            </Link>
+                            <Link
+                                href={'/'}
+                                className="inline-flex items-center px-6 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500"
+                            >
+                                Return to Homepage
+                            </Link>
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
         </main>
     );
 };
+
+const BookingDetails = ({ booking }: { booking: any }) => (
+    <div className="space-y-3">
+        <InfoRow icon={<CreditCard className="h-5 w-5 text-gray-400" />} label="Booking ID" value={booking.bookingId} />
+        <InfoRow icon={<CreditCard className="h-5 w-5 text-gray-400" />} label="Amount" value={`₹${parseFloat(booking.amount).toFixed(2)}`} />
+        <InfoRow icon={<Clock className="h-5 w-5 text-gray-400" />} label="Created At" value={new Date(booking.createdAt).toLocaleString()} />
+        <InfoRow icon={<CreditCard className="h-5 w-5 text-gray-400" />} label="Payment ID" value={booking.paymentId || "N/A"} />
+    </div>
+);
+
+const UserDetails = ({ user }: { user: any }) => (
+    <div className="space-y-3">
+        <InfoRow icon={<User className="h-5 w-5 text-gray-400" />} label="Name" value={user.name} />
+        <InfoRow icon={<Mail className="h-5 w-5 text-gray-400" />} label="Email" value={user.email || "Not provided"} />
+        <InfoRow icon={<Phone className="h-5 w-5 text-gray-400" />} label="Phone" value={user.phone} />
+    </div>
+);
+
+const InfoRow = ({ icon, label, value }: { icon: React.ReactNode, label: string, value: string }) => (
+    <div className="flex items-center space-x-3 text-sm">
+        {icon}
+        <span className="text-gray-500 dark:text-gray-400">{label}:</span>
+        <span className="font-medium text-gray-900 dark:text-gray-100">{value}</span>
+    </div>
+);
 
 export default Page;

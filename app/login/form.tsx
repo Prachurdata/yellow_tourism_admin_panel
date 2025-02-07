@@ -71,32 +71,32 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background ">
-      <div className="w-full max-w-md space-y-8  shadow-lg p-10">
-        <div className="flex flex-col items-center space-y-4 ">
-          {/* <div className="w-[300px] h-[150px] overflow-hidden relative">
-            <Image src="/logo.png" alt="Logo" fill className="object-cover" />
-          </div> */}
-          <h1 className="text-4xl font-bold tracking-tight">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-900 dark:to-gray-800 p-4">
+      <div className="w-full max-w-md space-y-6 rounded-xl bg-white dark:bg-gray-850 shadow-2xl p-8 border border-gray-200 dark:border-gray-700">
+        <div className="flex flex-col items-center space-y-2 text-center">
+          <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-cyan-500 to-blue-500 bg-clip-text text-transparent">
             Welcome back Admin
           </h1>
-          <p className="text-muted-foreground">Sign in to your account</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            Sign in to access your dashboard
+          </p>
         </div>
+
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-8 width-full "
+            className="space-y-5 width-full"
           >
             <FormField
               control={form.control}
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Username</FormLabel>
+                  <FormLabel className="text-sm font-medium">Username</FormLabel>
                   <FormControl>
                     <Input
                       id="email"
-                      className="text-black dark:text-white"
+                      className="h-11 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-2 text-sm"
                       placeholder="Enter Username"
                       {...field}
                       type="text"
@@ -110,25 +110,25 @@ export default function LoginForm() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel className="text-sm font-medium">Password</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Input
                         id="password"
-                        className="text-black dark:text-white pr-10"
+                        className="h-11 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-2 text-sm pr-10"
                         placeholder="Enter Password"
                         {...field}
                         type={hidden ? "password" : "text"}
                       />
                       <button
                         type="button"
-                        className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                         onClick={() => setHidden(!hidden)}
                       >
                         {hidden ? (
-                          <EyeOffIcon className="h-5 w-5 text-gray-400" />
+                          <EyeOffIcon className="h-5 w-5" />
                         ) : (
-                          <EyeIcon className="h-5 w-5 text-gray-400" />
+                          <EyeIcon className="h-5 w-5" />
                         )}
                       </button>
                     </div>
@@ -138,11 +138,17 @@ export default function LoginForm() {
             />
             <Button
               type="submit"
-              className="hover:scale-110 hover:bg-cyan-700 ml-aut
-          w-full"
+              className="w-full h-11 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white rounded-lg font-medium transition-all duration-200 hover:shadow-lg"
               disabled={form.formState.isSubmitting}
             >
-              {form.formState.isSubmitting ? "Submitting..." : "Login"}
+              {form.formState.isSubmitting ? (
+                <div className="flex items-center justify-center gap-2">
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  Signing in...
+                </div>
+              ) : (
+                "Sign in"
+              )}
             </Button>
           </form>
         </Form>

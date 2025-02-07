@@ -51,27 +51,30 @@ const FareDetail2: React.FC<FareSummaryProps> = ({ totalPriceInfo, travellerInfo
   };
 
   return (
-    <div className="mx-auto font-jost bg-white shadow-md rounded-lg text-[14px] md:text-[15px]">
-      <h2 className="font-bold text-white py-3 px-6 bg-[#5A5E5F] rounded-t-lg text-[15px] md:text-[16px]">Fare Summary</h2>
-      <div className="space-y-2 py-3 px-6">
-        <div className="flex justify-between">
+    <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+      <h2 className="font-bold text-white py-4 px-6 bg-[#5A5E5F] text-lg border-b border-gray-100">
+        Fare Summary
+      </h2>
+      
+      <div className="p-6 space-y-4">
+        <div className="flex justify-between items-center">
           <span className="text-gray-600">Base fare</span>
-          <span className="font-medium">₹{adjustedBaseFare.toFixed(2)}</span>
+          <span className="font-medium text-gray-900">₹{adjustedBaseFare.toFixed(2)}</span>
         </div>
 
-        <div className="flex justify-between items-center cursor-pointer" onClick={toggleTaxBreakdown}>
-          <div className="flex items-center">
+        <div 
+          className="flex justify-between items-center cursor-pointer hover:bg-gray-50 p-2 -mx-2 rounded-lg transition-colors"
+          onClick={toggleTaxBreakdown}
+        >
+          <div className="flex items-center space-x-2">
             <span className="text-gray-600">Taxes and fees</span>
-            <span className={`ml-2 transform transition-transform ${isTaxBreakdownVisible ? 'rotate-180' : 'rotate-0'}`}>
-              <MdKeyboardArrowDown />
-            </span>
+            <MdKeyboardArrowDown className={`transition-transform duration-200 ${isTaxBreakdownVisible ? 'rotate-180' : ''}`} />
           </div>
-          <span className="font-medium">₹{totalTaxesAndFees.toFixed(2)}</span>
+          <span className="font-medium text-gray-900">₹{totalTaxesAndFees.toFixed(2)}</span>
         </div>
 
-        {/* Tax Breakdown */}
         {isTaxBreakdownVisible && (
-          <div className="mx-0.5 mt-2 space-y-1 text-[12px]">
+          <div className="space-y-3 pl-4 pt-2 border-l-2 border-gray-100">
             {YQ > 0 && (
               <div className="flex justify-between">
                 <span className="text-gray-500">YQ (Fuel Surcharge)</span>
@@ -95,10 +98,11 @@ const FareDetail2: React.FC<FareSummaryProps> = ({ totalPriceInfo, travellerInfo
           </div>
         )}
 
-        <hr className="my-2 text-[15px]" />
-        <div className="flex justify-between">
-          <span className="text-gray-600">Total Amount</span>
-          <span className="font-medium">₹{totalFare.toFixed(2)}</span>
+        <div className="border-t border-gray-100 pt-4 mt-4">
+          <div className="flex justify-between items-center">
+            <span className="text-lg font-medium text-gray-700">Total Amount</span>
+            <span className="text-xl font-bold text-[#FFCD09]">₹{totalFare.toFixed(2)}</span>
+          </div>
         </div>
       </div>
     </div>

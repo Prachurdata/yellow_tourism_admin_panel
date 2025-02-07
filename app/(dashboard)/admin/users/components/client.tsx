@@ -1,12 +1,10 @@
 "use client";
 
 import { DataTable } from "@/components/ui/data-table";
-import { Heading } from "@/components/ui/heading";
-import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
 import { UsersColumn, columns } from "./columns";
 import { useRouter } from "next/navigation";
+import { PageHeader } from "@/components/ui/page-header";
+import { Card } from "@/components/ui/card";
 
 interface ProductsClientProps {
   data: UsersColumn[];
@@ -14,17 +12,23 @@ interface ProductsClientProps {
 
 export const ProductsClient: React.FC<ProductsClientProps> = ({ data }) => {
   const router = useRouter();
+
   return (
-    <>
-      <div className="flex items-center justify-between">
-        <Heading title={`Users (${data.length})`} description="Manage Users." />
-        <Button onClick={() => router.push(`/admin/add-user`)}>
-          <Plus className="mr-2 h-4 w-4" /> Add New
-        </Button>
-      </div>
-      <Separator />
-      <DataTable searchKey="name" columns={columns} data={data} />
-      <Separator />
-    </>
+    <div className="space-y-4">
+      <PageHeader
+        title={`Users (${data.length})`}
+        description="Manage your application users"
+        showAddButton
+        onAddClick={() => router.push(`/admin/add-user`)}
+      />
+      <Card className="p-4 shadow-md dark:shadow-gray-800">
+        <DataTable 
+          searchKey="name" 
+          columns={columns} 
+          data={data}
+          className="bg-white dark:bg-gray-900 rounded-lg"
+        />
+      </Card>
+    </div>
   );
 };
