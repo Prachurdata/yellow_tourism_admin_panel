@@ -62,66 +62,72 @@ const Page = ({ params }: { params: { bookingId: string } }) => {
     );
 
   return (
-    <main className="w-10/12 mx-auto flex flex-col xl:flex-row gap-5 pt-24 pb-10">
-      <div className="shadow-md rounded-b-lg w-full xl:w-[70%] bg-white">
-        <h2 className="font-bold font-jost text-white py-3 px-5 md:px-10 bg-[#5A5E5F] text-[15px] md:text-[16px] rounded-t-lg">
-          Booking Status
-        </h2>
+    <main className="bg-gray-50 min-h-screen">
+      <div className="w-11/12 md:w-10/12 mx-auto flex flex-col xl:flex-row gap-6 py-24">
+        <div className="flex-1 xl:w-[70%]">
+          <div className="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
+            <h2 className="font-bold font-jost text-white py-4 px-6 md:px-10 bg-[#5A5E5F] text-lg">
+              Booking Status
+            </h2>
 
-        <div className="flex items-center space-x-3 mt-6 px-4 md:px-6">
-          {status ? (
-            <div className="flex items-center space-x-2">
-              <div className="bg-[#208C25] rounded-full p-2 flex items-center justify-center">
-                <FaCheck className="text-white text-[10px] md:text-[1rem]" />
-              </div>
-              <h1 className="text-[#208C25] font-bold text-xl md:text-2xl">
-                Booking Confirmed
-              </h1>
+            <div className="p-6">
+              {status ? (
+                <div className="flex items-center space-x-3">
+                  <div className="bg-green-100 text-green-600 rounded-full p-3">
+                    <FaCheck className="text-lg" />
+                  </div>
+                  <h1 className="text-green-600 font-bold text-xl md:text-2xl">
+                    Booking Confirmed
+                  </h1>
+                </div>
+              ) : (
+                <div className="flex items-center space-x-3">
+                  <div className="bg-red-100 text-red-500 rounded-full p-3">
+                    <FaTimes className="text-lg" />
+                  </div>
+                  <h1 className="text-red-500 font-bold text-xl md:text-2xl">
+                    Booking Failed
+                  </h1>
+                </div>
+              )}
             </div>
-          ) : (
-            <div className="flex items-center space-x-2">
-              <div className="bg-red-500 rounded-full p-2 flex items-center justify-center">
-                <FaTimes className="text-white text-[10px] md:text-[1rem]" />
-              </div>
-              <h1 className="text-red-600 font-bold text-xl md:text-2xl">
-                Booking Failed
-              </h1>
-            </div>
-          )}
-        </div>
+          </div>
 
-        <div className="mt-3 md:mt-5">
-          <h3 className="font-bold mb-3 md:mb-2 px-6 pt-4 font-jost">
-            Flight Details
-          </h3>
-          <div className="mx-6 md:mx-0 md:-my-2">
-            {tripInfos?.map((tripInfo: any, index: number) => (
-              <FlightDetail2 key={index} SIdata={tripInfo.sI} />
-            ))}
+          <div className="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
+            <h3 className="font-bold px-6 py-4 font-jost text-lg border-b">
+              Flight Details
+            </h3>
+            <div className="p-4">
+              {tripInfos?.map((tripInfo: any, index: number) => (
+                <FlightDetail2 key={index} SIdata={tripInfo.sI} />
+              ))}
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
+            <TravellerInfo travellerInfos={travellerInfos} />
+          </div>
+
+          <div className="flex justify-center py-6">
+            <Link
+              href={"/"}
+              className="inline-flex items-center justify-center font-jost text-white transition-all duration-300 ease-in-out bg-[#FFCD09] hover:bg-[#5A5E5F] py-3 px-12 rounded-xl text-base font-medium shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+            >
+              Back to Home
+            </Link>
           </div>
         </div>
 
-        <div className="">
-          <TravellerInfo travellerInfos={travellerInfos} />
+        <div className="xl:w-[30%]">
+          {totalPriceInfo && (
+            <div className="sticky top-24">
+              <FareDetail2
+                totalPriceInfo={totalPriceInfo}
+                travellerInfo={travellerInfos}
+              />
+            </div>
+          )}
         </div>
-
-        <div className="w-full mb-6 mt-1 md:mt-2 flex justify-center font-jost text-[12px] md:text-[16px]">
-          <Link
-            href={"/"}
-            className="font-jost text-white transition-all duration-300 ease-in-out bg-[#FFCD09] hover:bg-[#5A5E5F] py-2 px-10 md:px-12 rounded-lg"
-          >
-            Home
-          </Link>
-        </div>
-      </div>
-
-      <div className="xl:w-[30%]">
-        {totalPriceInfo && (
-          <FareDetail2
-            totalPriceInfo={totalPriceInfo}
-            travellerInfo={travellerInfos}
-          />
-        )}
       </div>
     </main>
   );

@@ -1,28 +1,29 @@
 "use client";
 
 import { DataTable } from "@/components/ui/data-table";
-import { Heading } from "@/components/ui/heading";
-import { Separator } from "@/components/ui/separator";
-
 import { BookingsColumn, columns } from "./columns";
+import { PageHeader } from "@/components/ui/page-header";
+import { Card } from "@/components/ui/card";
 
 interface ProductsClientProps {
   data: BookingsColumn[];
-};
+}
 
-export const ProductsClient: React.FC<ProductsClientProps> = ({
-  data
-}) => {
-
-
+export const ProductsClient: React.FC<ProductsClientProps> = ({ data }) => {
   return (
-    <> 
-      <div className="flex items-center justify-between">
-        <Heading title={`Flight Bookings (${data.length})`} description="Manage Bookings." />
-      </div>
-      <Separator />
-      <DataTable searchKey="bookingId" columns={columns} data={data}  />
-      <Separator />
-    </>
+    <div className="space-y-4">
+      <PageHeader
+        title={`Flight Bookings (${data.length})`}
+        description="Track and manage flight bookings"
+      />
+      <Card className="p-4 shadow-md dark:shadow-gray-800">
+        <DataTable 
+          searchKey="bookingId" 
+          columns={columns} 
+          data={data}
+          className="bg-white dark:bg-gray-900 rounded-lg"
+        />
+      </Card>
+    </div>
   );
 };
