@@ -5,21 +5,18 @@ import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./cell-action";
 
 const type = ["flight", "hotel"];
-export type BookingsColumn =
-  | {
-      id: string;
-      bookingId: string;
-      paymentId: string | null;
-      amount: string;
-      status: string;
-      phone: string | null;
-      user: string;
-      paymentStatus: string;
-      type: string;
-    }
-  | undefined;
+export type BookingsColumn = {
+  id: string;
+  bookingId: string;
+  paymentId: string | null;
+  amount: string;
+  status: string;
+  phone: string | null;
+  user: string;
+  paymentStatus: string;
+};
 
-export const columns: ColumnDef<BookingsColumn>[] = [
+export const columns: ColumnDef<BookingsColumn, any>[] = [
   // {
   //   id: "select",
   //   header: ({ table }) => (

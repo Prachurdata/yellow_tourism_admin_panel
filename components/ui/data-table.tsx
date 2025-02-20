@@ -35,8 +35,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 // import { useRouter } from "next/navigation";
 
-interface DataTableProps<TData extends Record<string, any>, TValue> {
-  columns: ColumnDef<TData, TValue>[];
+interface DataTableProps<TData> {
+  columns: ColumnDef<TData, any>[];
   data: TData[];
   searchKeys: { key: string; label: string }[];
   className?: string;
@@ -46,18 +46,16 @@ interface DataTableProps<TData extends Record<string, any>, TValue> {
     title: string;
     options: { label: string; value: string }[];
   }[];
-  // redirectUrl: string | null;
 }
 
-export function DataTable<TData extends Record<string, any>, TValue>({
+export function DataTable<TData extends Record<string, any>>({
   columns,
   data,
   searchKeys,
   className,
   exportFileName = "exported-data",
   filterableColumns = [],
-  // redirectUrl,
-}: DataTableProps<TData, TValue>) {
+}: DataTableProps<TData>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
@@ -70,7 +68,7 @@ export function DataTable<TData extends Record<string, any>, TValue>({
   };
 
   const table = useReactTable({
-    data,
+    data: data || [],  // Provide empty array as fallback
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -108,6 +106,15 @@ export function DataTable<TData extends Record<string, any>, TValue>({
   const currentPage = table.getState().pagination.pageIndex + 1;
   const rangeStart = (currentPage - 1) * pageSize + 1;
   const rangeEnd = Math.min(currentPage * pageSize, totalRows);
+
+  // Add safety check for data after hooks
+  if (!data || data.length === 0) {
+    return (
+      <div className="text-center py-10">
+        <p className="text-muted-foreground">No data available</p>
+      </div>
+    );
+  }
 
   // const router = useRouter();
   // const handleRowClick = (id: string, event: any) => {
@@ -158,7 +165,10 @@ export function DataTable<TData extends Record<string, any>, TValue>({
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <Input
-            placeholder={`Search by ${searchKeys.map(k => k.label).join(', ')}...`}
+            placeholder={searchKeys?.length 
+              ? `Search by ${searchKeys.map(k => k.label).join(', ')}...`
+              : "Search..."
+            }
             value={globalFilter}
             onChange={(event) => handleSearch(event.target.value)}
             className="w-full sm:w-[300px]"

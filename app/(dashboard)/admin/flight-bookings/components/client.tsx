@@ -10,6 +10,8 @@ interface ProductsClientProps {
 }
 
 export const ProductsClient: React.FC<ProductsClientProps> = ({ data }) => {
+  if (!data) return null;
+
   return (
     <div className="space-y-4">
       <PageHeader
@@ -17,7 +19,7 @@ export const ProductsClient: React.FC<ProductsClientProps> = ({ data }) => {
         description="Track and manage flight bookings"
       />
       <Card className="p-4 shadow-md dark:shadow-gray-800">
-        <DataTable 
+        <DataTable<BookingsColumn>
           searchKeys={[
             { key: "bookingId", label: "booking ID" },
             { key: "paymentId", label: "payment ID" },

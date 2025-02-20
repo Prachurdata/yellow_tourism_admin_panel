@@ -22,7 +22,7 @@ export const ProductsClient: React.FC<ProductsClientProps> = ({ data }) => {
         onAddClick={() => router.push(`/admin/add-user`)}
       />
       <Card className="p-4 shadow-md dark:shadow-gray-800">
-        <DataTable 
+        <DataTable<UsersColumn>
           searchKeys={[
             { key: "name", label: "name" },
             { key: "email", label: "email" },

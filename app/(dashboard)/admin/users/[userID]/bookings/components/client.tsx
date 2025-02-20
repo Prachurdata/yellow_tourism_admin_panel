@@ -22,7 +22,16 @@ export const ProductsClient: React.FC<ProductsClientProps> = ({ data }) => {
         />
       </div>
       <Separator />
-      <DataTable searchKey="bookingId" columns={columns} data={data} />
+      <DataTable<BookingsColumn>
+        searchKeys={[
+          { key: "bookingId", label: "booking ID" },
+          { key: "paymentId", label: "payment ID" },
+          { key: "phone", label: "phone" },
+          { key: "user", label: "user" }
+        ]}
+        columns={columns}
+        data={data}
+      />
       <Separator />
     </>
   );
