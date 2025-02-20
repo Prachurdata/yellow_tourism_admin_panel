@@ -9,7 +9,19 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   useReactTable,
+  RowSelectionState,
+  getSortedRowModel,
 } from "@tanstack/react-table";
+import * as XLSX from 'xlsx';
+import { FileDown } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 
 import {
   Table,
@@ -23,36 +35,69 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 // import { useRouter } from "next/navigation";
 
-interface DataTableProps<TData, TValue> {
+interface DataTableProps<TData extends Record<string, any>, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  searchKey: string;
+  searchKeys: { key: string; label: string }[];
   className?: string;
+  exportFileName?: string;
+  filterableColumns?: {
+    id: string;
+    title: string;
+    options: { label: string; value: string }[];
+  }[];
   // redirectUrl: string | null;
 }
 
-export function DataTable<TData, TValue>({
+export function DataTable<TData extends Record<string, any>, TValue>({
   columns,
   data,
-  searchKey,
+  searchKeys,
   className,
+  exportFileName = "exported-data",
+  filterableColumns = [],
   // redirectUrl,
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [globalFilter, setGlobalFilter] = useState("");
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+
+  // Custom filter function
+  const fuzzyFilter = (row: any, columnId: string, value: string) => {
+    const searchValue = value.toLowerCase();
+    const cellValue = String(row.getValue(columnId) || '').toLowerCase();
+    return cellValue.includes(searchValue);
+  };
+
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    onColumnFiltersChange: setColumnFilters,
+    getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    onColumnFiltersChange: setColumnFilters,
+    onGlobalFilterChange: setGlobalFilter,
+    onRowSelectionChange: setRowSelection,
     state: {
       columnFilters,
+      globalFilter,
+      rowSelection,
+    },
+    enableRowSelection: true,
+    enableSorting: true,
+    filterFns: {
+      fuzzy: fuzzyFilter,
+    },
+    globalFilterFn: (row, _columnId, filterValue) => {
+      const searchValue = filterValue.toLowerCase();
+      return searchKeys.some(({ key }) => {
+        const cellValue = String(row.getValue(key) || '').toLowerCase();
+        return cellValue.includes(searchValue);
+      });
     },
     initialState: {
-      pagination: {
-        pageSize: 8, // Show 8 records per page
-      },
+      pagination: { pageSize: 8 },
     },
   });
 
@@ -75,19 +120,150 @@ export function DataTable<TData, TValue>({
   //   router.push("/" + redirectUrl + "/" + id);
   // };
 
+  // Export functions
+  const exportToExcel = (exportData: TData[]) => {
+    const ws = XLSX.utils.json_to_sheet(exportData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Data");
+    XLSX.writeFile(wb, `${exportFileName}.xlsx`);
+  };
+
+  const exportToCSV = (exportData: TData[]) => {
+    if (exportData.length === 0) return;
+    
+    const headers = Object.keys(exportData[0]).join(',');
+    const csvData = exportData.map(row => 
+      Object.values(row as Record<string, unknown>)
+        .map(value => 
+          typeof value === 'string' ? `"${value}"` : String(value)
+        )
+        .join(',')
+    );
+    
+    const csv = [headers, ...csvData].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `${exportFileName}.csv`;
+    link.click();
+  };
+
+  // Function to handle global search across multiple columns
+  const handleSearch = (value: string) => {
+    setGlobalFilter(value);
+  };
+
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <Input
-          placeholder="Search..."
-          value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn(searchKey)?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
-        <div className="text-sm text-gray-500 dark:text-gray-400">
-          Total records: {totalRows}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <Input
+            placeholder={`Search by ${searchKeys.map(k => k.label).join(', ')}...`}
+            value={globalFilter}
+            onChange={(event) => handleSearch(event.target.value)}
+            className="w-full sm:w-[300px]"
+          />
+          <div className="flex flex-wrap items-center gap-2">
+            {filterableColumns.map((column) => (
+              <DropdownMenu key={column.id}>
+                <DropdownMenuTrigger asChild>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="h-9 min-w-[180px] justify-between"
+                  >
+                    <span className="truncate mr-2">
+                      {column.title}: {table.getColumn(column.id)?.getFilterValue() as string || 'All'}
+                    </span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-[180px]">
+                  <DropdownMenuLabel className="font-normal">
+                    <p className="text-sm font-medium leading-none mb-1">
+                      {column.title}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      Select a filter
+                    </p>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={() => {
+                      table.getColumn(column.id)?.setFilterValue(null);
+                    }}
+                    className="justify-between"
+                  >
+                    All
+                  </DropdownMenuItem>
+                  {column.options.map((option) => (
+                    <DropdownMenuItem
+                      key={option.value}
+                      onClick={() => {
+                        table.getColumn(column.id)?.setFilterValue(option.value);
+                      }}
+                      className="justify-between"
+                    >
+                      {option.label}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ))}
+          </div>
+        </div>
+        <div className="flex items-center gap-2 ml-auto">
+          <div className="text-sm text-muted-foreground">
+            Total records: {totalRows}
+          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="h-9">
+                <FileDown className="h-4 w-4 mr-2" />
+                Export
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-[180px]">
+              <DropdownMenu>
+                <DropdownMenuTrigger className="w-full">
+                  <DropdownMenuItem>
+                    Export All
+                    <span className="ml-auto">→</span>
+                  </DropdownMenuItem>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent side="right" className="w-[120px]">
+                  <DropdownMenuItem onClick={() => exportToExcel(data)}>
+                    Excel
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => exportToCSV(data)}>
+                    CSV
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger className="w-full">
+                  <DropdownMenuItem
+                    disabled={table.getSelectedRowModel().rows.length === 0}
+                  >
+                    Export Selected
+                    <span className="ml-auto">→</span>
+                  </DropdownMenuItem>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent side="right" className="w-[120px]">
+                  <DropdownMenuItem 
+                    onClick={() => exportToExcel(table.getSelectedRowModel().rows.map(row => row.original))}
+                  >
+                    Excel
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => exportToCSV(table.getSelectedRowModel().rows.map(row => row.original))}
+                  >
+                    CSV
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
       <div className={`rounded-md border ${className}`}>

@@ -18,10 +18,34 @@ export const ProductsClient: React.FC<ProductsClientProps> = ({ data }) => {
       />
       <Card className="p-4 shadow-md dark:shadow-gray-800">
         <DataTable 
-          searchKey="bookingId" 
+          searchKeys={[
+            { key: "bookingId", label: "booking ID" },
+            { key: "paymentId", label: "payment ID" },
+            { key: "phone", label: "phone" },
+            { key: "user", label: "user" }
+          ]}
           columns={columns} 
           data={data}
           className="bg-white dark:bg-gray-900 rounded-lg"
+          exportFileName="flight-bookings"
+          filterableColumns={[
+            {
+              id: "status",
+              title: "Booking Status",
+              options: [
+                { label: "Confirmed", value: "CONFIRMED" },
+                { label: "Pending", value: "PENDING" }
+              ]
+            },
+            {
+              id: "paymentStatus",
+              title: "Payment Status",
+              options: [
+                { label: "Paid", value: "PAID" },
+                { label: "Unpaid", value: "UNPAID" }
+              ]
+            }
+          ]}
         />
       </Card>
     </div>

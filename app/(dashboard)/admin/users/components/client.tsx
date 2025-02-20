@@ -23,7 +23,12 @@ export const ProductsClient: React.FC<ProductsClientProps> = ({ data }) => {
       />
       <Card className="p-4 shadow-md dark:shadow-gray-800">
         <DataTable 
-          searchKey="name" 
+          searchKeys={[
+            { key: "name", label: "name" },
+            { key: "email", label: "email" },
+            { key: "phone", label: "phone" },
+            { key: "role", label: "role" }
+          ]}
           columns={columns} 
           data={data}
           className="bg-white dark:bg-gray-900 rounded-lg"
