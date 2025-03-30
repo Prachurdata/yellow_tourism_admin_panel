@@ -1,7 +1,12 @@
 import { prisma } from "@/lib/db";
 
-const getTotalRevenue = async () => {
-  const flightBookings = await prisma.hotelBooking.findMany({
+type BookingType = {
+  amount: string;
+  tripjackAmount: string | null;
+};
+
+export const getTotalRevenue = async () => {
+  const flightBookings = await prisma.flightBooking.findMany({
     where: {
       status: "CONFIRMED",
     },
@@ -22,21 +27,27 @@ const getTotalRevenue = async () => {
   });
 
   const totalRevenue =
-    flightBookings.reduce((acc, curr) => acc + parseInt(curr.amount), 0) +
-    hotelBookings.reduce((acc, curr) => parseInt(curr.amount), 0);
+    flightBookings.reduce((acc: number, curr: BookingType) => acc + parseInt(curr.amount), 0) +
+    hotelBookings.reduce((acc: number, curr: BookingType) => acc + parseInt(curr.amount), 0);
 
   const totalTripjackRevenue =
     flightBookings.reduce(
-      (acc, curr) =>
-        acc + parseInt(curr.tripjackAmount ? curr.tripjackAmount : "0"),
+      (acc: number, curr: BookingType) => acc + parseInt(curr.tripjackAmount || "0"),
       0
     ) +
     hotelBookings.reduce(
-      (acc, curr) => parseInt(curr.tripjackAmount ? curr.tripjackAmount : "0"),
+      (acc: number, curr: BookingType) => acc + parseInt(curr.tripjackAmount || "0"),
       0
     );
 
-  return { totalRevenue, totalTripjackRevenue };
+  return {
+    totalRevenue: totalRevenue.toLocaleString("en-IN", {
+      style: "currency",
+      currency: "INR",
+    }),
+    totalTripjackRevenue: totalTripjackRevenue.toLocaleString("en-IN", {
+      style: "currency",
+      currency: "INR",
+    }),
+  };
 };
-
-export default getTotalRevenue;
