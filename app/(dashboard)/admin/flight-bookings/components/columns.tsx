@@ -3,7 +3,9 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CellAction } from "./cell-action";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "lucide-react";
+import React from "react";
+
 
 export type BookingsColumn = {
   id: string;

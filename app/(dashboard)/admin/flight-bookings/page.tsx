@@ -1,12 +1,25 @@
 import { prisma } from "@/lib/db";
 import { ProductsClient } from "./components/client";
 import { BookingsColumn } from "./components/columns";
-import type { FlightBooking, User } from ".prisma/client";
+import { Prisma } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
 
-type BookingWithUser = FlightBooking & {
-  user: User;
+type BookingWithUser = {
+  id: string;
+  bookingId: string;
+  amount: string;
+  tripjackAmount: string | null;
+  userId: string;
+  status: "PENDING" | "CONFIRMED" | "CANCELLED";
+  paymentStatus: "UNPAID" | "AUTHORIZED" | "PAID" | "REFUNDED" | "FAILED";
+  orderId: string;
+  paymentId: string | null;
+  phone: string | null;
+  gstNumber: string | null;
+  user: {
+    name: string;
+  };
 };
 
 const FlightBookingsPage = async () => {

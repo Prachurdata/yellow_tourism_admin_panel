@@ -1,12 +1,12 @@
-import type { BookingStatus, PaymentStatus } from ".prisma/client";
+import { Prisma } from "@prisma/client";
 
 export type BookingsColumn = {
   id: string;
   bookingId: string;
   paymentId: string | null;
   amount: string;
-  status: BookingStatus;
+  status: Prisma.Enumerable<"PENDING" | "CONFIRMED" | "CANCELLED">;
   phone: string | null;
   user: string;
-  paymentStatus: PaymentStatus;
+  paymentStatus: Prisma.Enumerable<"UNPAID" | "AUTHORIZED" | "PAID" | "REFUNDED" | "FAILED">;
 }; 
