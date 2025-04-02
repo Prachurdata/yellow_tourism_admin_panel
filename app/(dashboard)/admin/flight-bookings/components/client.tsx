@@ -1,10 +1,11 @@
 "use client";
 
 import { DataTable } from "@/components/ui/data-table";
-import { columns } from "./columns-definition";
+
 import { PageHeader } from "@/components/ui/page-header";
 import { Card } from "@/components/ui/card";
 import { BookingsColumn } from "./columns";
+import { columns } from "./columns-definition";
 
 interface ProductsClientProps {
   data: BookingsColumn[];
