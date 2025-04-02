@@ -2,7 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { ColumnDef } from "@tanstack/react-table";
-
+import { Row } from "@tanstack/react-table";
 import { BookingsColumn } from "./columns";
 
 export const columns: ColumnDef<BookingsColumn>[] = [
@@ -21,10 +21,13 @@ export const columns: ColumnDef<BookingsColumn>[] = [
   {
     accessorKey: "status",
     header: "Status",
-    cell: ({ row }) => {
+    cell: ({ row }: { row: Row<BookingsColumn> }) => {
       const status = row.getValue("status") as "PENDING" | "CONFIRMED" | "CANCELLED";
       return (
-        <Badge variant={status === "CONFIRMED" ? "success" : status === "PENDING" ? "warning" : "destructive"}>
+        <Badge className={
+          status === "CONFIRMED" ? "bg-green-500" : 
+          status === "PENDING" ? "bg-yellow-500" : "bg-red-500"
+        }>
           {status.toLowerCase()}
         </Badge>
       );
@@ -33,10 +36,13 @@ export const columns: ColumnDef<BookingsColumn>[] = [
   {
     accessorKey: "paymentStatus",
     header: "Payment Status",
-    cell: ({ row }) => {
+    cell: ({ row }: { row: Row<BookingsColumn> }) => {
       const status = row.getValue("paymentStatus") as "UNPAID" | "AUTHORIZED" | "PAID" | "REFUNDED" | "FAILED";
       return (
-        <Badge variant={status === "PAID" ? "success" : status === "AUTHORIZED" ? "warning" : "destructive"}>
+        <Badge className={
+          status === "PAID" ? "bg-green-500" : 
+          status === "AUTHORIZED" ? "bg-yellow-500" : "bg-red-500"
+        }>
           {status.toLowerCase()}
         </Badge>
       );
