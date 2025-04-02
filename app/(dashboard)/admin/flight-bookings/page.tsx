@@ -1,7 +1,6 @@
 import { prisma } from "@/lib/db";
 import { ProductsClient } from "./components/client";
 import { BookingsColumn } from "./components/columns";
-import { Prisma } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
 

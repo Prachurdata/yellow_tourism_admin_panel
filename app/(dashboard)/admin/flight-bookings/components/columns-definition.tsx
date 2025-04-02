@@ -1,8 +1,7 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
-import { Prisma } from "@prisma/client";
 import { Badge } from "@/components/ui/badge";
+import { ColumnDef } from "@tanstack/react-table";
 
 import { BookingsColumn } from "./columns";
 
