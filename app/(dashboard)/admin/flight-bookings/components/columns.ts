@@ -1,4 +1,4 @@
-import { BookingStatus, PaymentStatus } from ".prisma/client";
+import type { BookingStatus, PaymentStatus } from ".prisma/client";
 
 export type BookingsColumn = {
   id: string;

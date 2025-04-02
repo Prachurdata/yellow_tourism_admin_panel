@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/client"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model User {
+  id              String          @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  email           String          @unique
+  phone           String          @unique
+  password        String
+  flight_bookings FlightBooking[]
+  hotel_bookings  HotelBooking[]
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+}
+
+model FlightBooking {
+  id             String        @id @default(auto()) @map("_id") @db.ObjectId
+  bookingId      String        @unique
+  amount         String // Store payment information in JSON format
+  tripjackAmount String?
+  user           User          @relation(fields: [userId], references: [id])
+  userId         String        @db.ObjectId
+  status         BookingStatus @default(PENDING)
+  paymentStatus  PaymentStatus @default(UNPAID)
+  orderId        String        @unique
+  paymentId      String?
+  phone          String?
+  gstNumber      String?
+
+  travellerInfo Json[]
+  deliveryInfo  Json?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model HotelBooking {
+  id             String        @id @default(auto()) @map("_id") @db.ObjectId
+  bookingId      String        @unique
+  amount         String
+  tripjackAmount String?
+  user           User          @relation(fields: [userId], references: [id])
+  userId         String        @db.ObjectId
+  status         BookingStatus @default(PENDING)
+  paymentStatus  PaymentStatus @default(UNPAID)
+  orderId        String        @unique
+  paymentId      String?
+  phone          String?
+  gstNumber      String?
+
+  roomTravellerInfo Json[]
+  deliveryInfo      Json?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  UNPAID // payment not authorized
+  AUTHORIZED // payment authorized but not captured that is amount is deducted from user account but not credited to our account
+  PAID // payment authorized and captured   
+  REFUNDED
+  FAILED
+}

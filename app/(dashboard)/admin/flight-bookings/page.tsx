@@ -1,13 +1,13 @@
 import { prisma } from "@/lib/db";
 import { ProductsClient } from "./components/client";
 import { BookingsColumn } from "./components/columns";
-import { Prisma } from "@prisma/client";
+import type { FlightBooking, User } from ".prisma/client";
 
 export const dynamic = "force-dynamic";
 
-type BookingWithUser = Prisma.FlightBookingGetPayload<{
-  include: { user: true }
-}>;
+type BookingWithUser = FlightBooking & {
+  user: User;
+};
 
 const FlightBookingsPage = async () => {
   const bookings = await prisma.flightBooking.findMany({
