@@ -1,6 +1,6 @@
 import { getGraphRevenue } from "@/actions/getGraphData";
 import getTotalBookings from "@/actions/getTotalBookings";
-import getTotalRevenue from "@/actions/getTotalRevenue";
+import { getTotalRevenue } from "@/actions/getTotalRevenue";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { FaHotel } from "react-icons/fa";
