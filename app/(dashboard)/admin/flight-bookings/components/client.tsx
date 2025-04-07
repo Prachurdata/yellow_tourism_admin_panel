@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Card } from "@/components/ui/card";
 import { BookingsColumn } from "./columns";
 import { columns } from "./columns-definition";
+import React from "react";
 
 interface ProductsClientProps {
   data: BookingsColumn[];
