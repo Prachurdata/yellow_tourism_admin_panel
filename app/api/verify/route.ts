@@ -1,15 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "https://theyellowtourism.com",
+const allowedOrigins = [
+  'https://theyellowtourism.com',
+  'https://yellow-diaries-admin.vercel.app'
+];
+
+const corsHeaders = (origin: string | null) => ({
+  "Access-Control-Allow-Origin": origin && allowedOrigins.includes(origin) ? origin : allowedOrigins[0],
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
   "Access-Control-Allow-Credentials": "true"
-};
+});
 
-export async function OPTIONS() {
-  return NextResponse.json({}, { headers: corsHeaders });
+export async function OPTIONS(request: NextRequest) {
+  const origin = request.headers.get('origin');
+  return NextResponse.json({}, { headers: corsHeaders(origin) });
 }
 
 const generatedSignature = (
@@ -30,6 +36,7 @@ const generatedSignature = (
 };
 
 export async function POST(request: NextRequest) {
+  const origin = request.headers.get('origin');
   const { orderCreationId, razorpayPaymentId, razorpaySignature } =
     await request.json();
 
@@ -37,7 +44,7 @@ export async function POST(request: NextRequest) {
   if (signature !== razorpaySignature) {
     return NextResponse.json(
       { message: "payment verification failed", isOk: false, status: 400 },
-      { headers: corsHeaders }
+      { headers: corsHeaders(origin) }
     );
   }
   return NextResponse.json(
@@ -47,6 +54,6 @@ export async function POST(request: NextRequest) {
       status: 200,
       orderID: orderCreationId,
     },
-    { headers: corsHeaders }
+    { headers: corsHeaders(origin) }
   );
 }
